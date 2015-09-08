@@ -12,18 +12,31 @@ using System.Windows.Forms;
 
 namespace MRGSchedule
 {
-    public partial class Form1 : Form
+    public partial class FrmMain : LayeredBaseForm
     {
+        #region 常量
+        public static Font Msgfont = new Font("微软雅黑", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+        public static Font font1 = new Font("微软雅黑", 9.2f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+        public static Font font2 = new Font("微软雅黑", 16f, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+        #endregion
+
         public int clockHandle;
 
-        public Form1()
+        public FrmMain()
         {
             InitializeComponent();
 
+            this.BackColor = Color.FromArgb(255 / 2, Color.White);
+            this.Width = 7 * 70 + 20;
+            this.Height = 6 * 50 + 85;
+
+            MonthBaseControl.Location = new Point(10, 55);
+
             GetClockHandle();
 
-            HookStart();
+            //HookStart();//开始hook
         }
+
         #region 时钟窗口句柄
         [DllImport("user32.dll", EntryPoint = "FindWindow")]
         public static extern int FindWindow(string lpClassName, string lpWindowName);
@@ -190,5 +203,11 @@ namespace MRGSchedule
         public delegate void MouseActivityHandler(object sender, MouseEventArgs e);
         public event MouseActivityHandler MouseActivityEvent;
         #endregion
+
+
+        private void TrackOpacity_ValueChanged(object sender, EventArgs e)
+        {
+            this.BackColor = Color.FromArgb((int)(255 * TrackOpacity.Value), Color.White);
+        }
     }
 }
