@@ -37,7 +37,7 @@
             // TrackOpacity
             // 
             this.TrackOpacity.AdaptImage = true;
-            this.TrackOpacity.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.TrackOpacity.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TrackOpacity.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.TrackOpacity.BackImage = null;
@@ -58,9 +58,9 @@
             this.TrackOpacity.MouseCanControl = true;
             this.TrackOpacity.Name = "TrackOpacity";
             this.TrackOpacity.Orientation = LayeredSkin.Controls.Orientations.Horizontal;
-            this.TrackOpacity.PointImage = ((System.Drawing.Image)(resources.GetObject("TrackOpacity.PointImage")));
-            this.TrackOpacity.PointImageHover = ((System.Drawing.Image)(resources.GetObject("TrackOpacity.PointImageHover")));
-            this.TrackOpacity.PointImagePressed = ((System.Drawing.Image)(resources.GetObject("TrackOpacity.PointImagePressed")));
+            this.TrackOpacity.PointImage = null;
+            this.TrackOpacity.PointImageHover = null;
+            this.TrackOpacity.PointImagePressed = null;
             this.TrackOpacity.PointState = LayeredSkin.Controls.ControlStates.Normal;
             this.TrackOpacity.Size = new System.Drawing.Size(290, 16);
             this.TrackOpacity.SurfaceImage = null;
@@ -82,9 +82,9 @@
             this.DataSelectControl.Borders.TopColor = System.Drawing.Color.Empty;
             this.DataSelectControl.Borders.TopWidth = 1;
             this.DataSelectControl.Canvas = ((System.Drawing.Bitmap)(resources.GetObject("DataSelectControl.Canvas")));
-            this.DataSelectControl.Location = new System.Drawing.Point(23, 31);
+            this.DataSelectControl.Location = new System.Drawing.Point(12, 12);
             this.DataSelectControl.Name = "DataSelectControl";
-            this.DataSelectControl.Size = new System.Drawing.Size(119, 53);
+            this.DataSelectControl.Size = new System.Drawing.Size(280, 25);
             this.DataSelectControl.TabIndex = 3;
             this.DataSelectControl.Text = "layeredBaseControl2";
             // 
@@ -121,6 +121,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "";
             this.ResumeLayout(false);
+
         }
 
         #endregion
