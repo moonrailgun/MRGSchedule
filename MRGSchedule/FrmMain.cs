@@ -24,7 +24,7 @@ namespace MRGSchedule
         #endregion
 
         public DuiComboBox ScYear;
-        public DuiComboBox ScMonth;
+        public DuiComboBox ScWeek;
         public DuiLabel DateTimeNow;
 
         public int clockHandle;
@@ -46,7 +46,7 @@ namespace MRGSchedule
             //HookStart();//开始hook
         }
 
-        //创建控件
+        //创建菜单栏控件
         private void CreatDataSelectControl()
         {
             #region 日期选择栏
@@ -127,16 +127,16 @@ namespace MRGSchedule
             #endregion
 
             #region 添加月份列表
-            ScMonth = new DuiComboBox();
-            ScMonth.BaseColor = Color.White;
-            ScMonth.BackColor = Color.White;
-            ScMonth.Size = new Size(65, 25);
-            ScMonth.Location = new Point(205, 10);
-            ScMonth.SelectedIndexChanged += CBSelectedIndexChanged;
-            for (int i = 1; i <= 12; i++)
+            ScWeek = new DuiComboBox();
+            ScWeek.BaseColor = Color.White;
+            ScWeek.BackColor = Color.White;
+            ScWeek.Size = new Size(65, 25);
+            ScWeek.Location = new Point(205, 10);
+            ScWeek.SelectedIndexChanged += CBSelectedIndexChanged;
+            for (int i = 1; i <= 20; i++)
             {
                 DuiLabel lb = new DuiLabel();
-                lb.Text = string.Format("  {0}月", i.ToString("00"));
+                lb.Text = string.Format("第{0}周", i.ToString());
                 lb.Tag = i;
                 lb.Size = new Size(64, 25);
                 lb.Font = new Font("微软雅黑", 10);
@@ -147,18 +147,18 @@ namespace MRGSchedule
                 lb.BackColor = Color.White;
                 lb.MouseEnter += DateItemsMoveEnter;
                 lb.MouseLeave += DateItemsMoveLeave;
-                ScMonth.Items.Add(lb);
+                ScWeek.Items.Add(lb);
                 if (i == DateTime.Now.Month)
                 {
-                    ScMonth.SelectedIndex = i - 1;
-                    ScMonth.InnerListBox.Value = (double)i / (double)(12);
+                    ScWeek.SelectedIndex = i - 1;
+                    ScWeek.InnerListBox.Value = (double)i / (double)(12);
                 }
             }
-            ScMonth.ShowBorder = false;
-            ScMonth.InnerListBox.Height = 200;
-            ScMonth.InnerListBox.Width = 65;
-            ScMonth.InnerListBox.RefreshList();
-            DataSelectControl.DUIControls.Add(ScMonth);
+            ScWeek.ShowBorder = false;
+            ScWeek.InnerListBox.Height = 200;
+            ScWeek.InnerListBox.Width = 65;
+            ScWeek.InnerListBox.RefreshList();
+            DataSelectControl.DUIControls.Add(ScWeek);
             #endregion
 
             #region 添加下一月按钮
@@ -170,9 +170,34 @@ namespace MRGSchedule
             btnext.MouseClick += BtnNextClick;
             DataSelectControl.DUIControls.Add(btnext);
             #endregion
+
+            #region 添加实时时间
+            DateTimeNow = new DuiLabel();
+            DateTimeNow.Text = DateTime.Now.ToString("HH:mm:ss");
+            DateTimeNow.Font = new Font("微软雅黑", 18);
+            DateTimeNow.TextAlign = ContentAlignment.MiddleLeft;
+            DateTimeNow.ForeColor = Color.DodgerBlue;
+            DateTimeNow.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
+            DateTimeNow.Size = new Size(110, 20);
+            DateTimeNow.Location = new Point(325, 12);
+            DataSelectControl.DUIControls.Add(DateTimeNow);
+            Timer dateTimer = new Timer();//添加计时器
+            dateTimer.Tick += (sender, e) => { DateTimeNow.Text = DateTime.Now.ToString("HH:mm:ss"); };
+            dateTimer.Interval = 1000;
+            dateTimer.Start();
+            #endregion
+
+            #region 添加关闭按钮
+            DuiButton btClose = new DuiButton();
+            btClose.NormalImage = Resources.CloseN;
+            btClose.HoverImage = Resources.CloseE;
+            btClose.PressedImage = Resources.CloseD;
+            btClose.Location = new Point(DataSelectControl.Width - 35, 8);
+            btClose.MouseClick += (sender, e) => { this.Close(); };
+            DataSelectControl.DUIControls.Add(btClose);
+            #endregion
         }
 
-    
         #region 年月列表项鼠标事件
 
         private void DateItemsMoveEnter(object sender, EventArgs e)
@@ -194,43 +219,44 @@ namespace MRGSchedule
         {
             try
             {
-                RefrshMonthDay();
+                RefrshSchedule();
             }
-            catch
+            catch(Exception ex)
             {
+                Console.WriteLine(ex.ToString());
             }
         }
         /// <summary>
         /// 更新日历
         /// </summary>
-        public void RefrshMonthDay()
+        public void RefrshSchedule()
         {
             /*
             if (Frmdaysinfo != null)
             {
                 Frmdaysinfo.Hide();
-            }
-            DuiLabel lbmonth = (DuiLabel)CbMonth.Items[CbMonth.SelectedIndex];
-            DuiLabel lbyear = (DuiLabel)CbYear.Items[CbYear.SelectedIndex];
+            }*/
+            DuiLabel lbmonth = (DuiLabel)ScWeek.Items[ScWeek.SelectedIndex];
+            DuiLabel lbyear = (DuiLabel)ScYear.Items[ScYear.SelectedIndex];
             DateTime dt = DateTime.Parse(string.Format("{0}-{1}", lbyear.Tag.ToString(), lbmonth.Tag.ToString()));
-            RefreshMonth(dt);*/
+            //RefreshMonth(dt);
         }
         #endregion
 
-        
+
         /// <summary>
         /// 上个月
         /// </summary>
         private void BtnBeforClick(object sender, EventArgs e)
         {
-            if (ScMonth.SelectedIndex == 0)
+            if (ScWeek.SelectedIndex == 0)
             {
                 ScYear.SelectedIndex -= 1;
-                ScMonth.SelectedIndex = 11;
+                ScWeek.SelectedIndex = 11;
             }
             else
             {
-                ScMonth.SelectedIndex -= 1;
+                ScWeek.SelectedIndex -= 1;
             }
         }
         /// <summary>
@@ -240,14 +266,14 @@ namespace MRGSchedule
         {
             try
             {
-                if (ScMonth.SelectedIndex == 11)
+                if (ScWeek.SelectedIndex == 11)
                 {
                     ScYear.SelectedIndex += 1;
-                    ScMonth.SelectedIndex = 0;
+                    ScWeek.SelectedIndex = 0;
                 }
                 else
                 {
-                    ScMonth.SelectedIndex += 1;
+                    ScWeek.SelectedIndex += 1;
                 }
             }
             catch
