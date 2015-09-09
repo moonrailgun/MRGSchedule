@@ -27,7 +27,10 @@ namespace MRGSchedule
     {
         private List<Lesson> lessonList = new List<Lesson>();
 
-        public bool AddLesson(Lesson lesson)
+        /// <summary>
+        /// 添加课程到列表
+        /// </summary>
+        private bool AddLesson(Lesson lesson)
         {
             foreach (Lesson l in lessonList)
             {

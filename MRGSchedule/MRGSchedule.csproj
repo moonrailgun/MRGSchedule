@@ -61,7 +61,7 @@
     <Compile Include="LayeredBaseForm.Designer.cs">
       <DependentUpon>LayeredBaseForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Lesson.cs" />
+    <Compile Include="LessonInfo.cs" />
     <Compile Include="MouseEvent.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

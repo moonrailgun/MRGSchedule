@@ -8,11 +8,11 @@ namespace MRGSchedule
 {
     class LessonInfo
     {
-        public string lessonName;
-        public int lessonStartWeek;
-        public int lessonOverWeek;
-        public string lessonTeacher;
-        public string lessonSite;
-        public List<string> lessonRemarks;
+        public string lessonName = "";
+        public int lessonStartWeek = 0;
+        public int lessonOverWeek = 0;
+        public string lessonTeacher = "";
+        public string lessonSite = "";
+        public List<string> lessonRemarks = new List<string>();
     }
 }
