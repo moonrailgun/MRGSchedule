@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace MRGSchedule
 {
@@ -26,6 +27,14 @@ namespace MRGSchedule
     class Schedule
     {
         private List<Lesson> lessonList = new List<Lesson>();
+
+        public void ImportSchedule()
+        {
+            string filePath = @"C:\Users\Chen\Downloads\schedule.doc";
+            StreamReader temp = new StreamReader(filePath);
+            StreamReader sr = new StreamReader(temp.BaseStream, Encoding.Default);//GBK编码获取数据
+            string str = sr.ReadToEnd();
+        }
 
         /// <summary>
         /// 添加课程到列表

@@ -33,11 +33,16 @@ namespace MRGSchedule
         {
             InitializeComponent();
 
+            //设置窗体
             this.BackColor = Color.FromArgb(255 / 2, Color.White);
             this.Width = 7 * 70 + 20;
             this.Height = 6 * 50 + 85;
-
             MonthBaseControl.Location = new Point(10, 55);
+
+            Schedule sc = new Schedule();
+            
+            //sc.ImportSchedule();
+            //return;
 
             GetClockHandle();//获取托盘时钟的句柄
 

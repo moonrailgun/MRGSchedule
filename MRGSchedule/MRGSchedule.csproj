@@ -48,11 +48,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FrmAddSchedule.cs">
+    <Compile Include="FrmImportSchedule.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FrmAddSchedule.Designer.cs">
-      <DependentUpon>FrmAddSchedule.cs</DependentUpon>
+    <Compile Include="FrmImportSchedule.Designer.cs">
+      <DependentUpon>FrmImportSchedule.cs</DependentUpon>
     </Compile>
     <Compile Include="FrmMain.cs">
       <SubType>Form</SubType>
