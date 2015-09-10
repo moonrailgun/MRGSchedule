@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace MRGSchedule
 {
@@ -34,6 +35,13 @@ namespace MRGSchedule
             StreamReader temp = new StreamReader(filePath);
             StreamReader sr = new StreamReader(temp.BaseStream, Encoding.Default);//GBK编码获取数据
             string str = sr.ReadToEnd();
+            str = str.Replace("\n","");
+
+            //辽工大课程表匹配文本
+            //string regexStr = @"^<p class=MsoNormal[\w\W]*<span[\w\W]*>(?<stuInfo>[\w\W]+)</span>";
+            string regexStr = @"<p class=MsoNormal[^>]*>[^<]*<b><span[^>*]>(?<stuInfo>[^<]+)";
+            Match mat = Regex.Match(str, regexStr);
+            string a = mat.Groups["stuInfo"].Value;
         }
 
         /// <summary>

@@ -41,8 +41,8 @@ namespace MRGSchedule
 
             Schedule sc = new Schedule();
             
-            //sc.ImportSchedule();
-            //return;
+            sc.ImportSchedule();
+            return;
 
             GetClockHandle();//获取托盘时钟的句柄
 
