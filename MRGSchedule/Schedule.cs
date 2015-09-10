@@ -38,10 +38,9 @@ namespace MRGSchedule
             str = str.Replace("\n","");
 
             //辽工大课程表匹配文本
-            //string regexStr = @"^<p class=MsoNormal[\w\W]*<span[\w\W]*>(?<stuInfo>[\w\W]+)</span>";
-            string regexStr = @"<p class=MsoNormal[^>]*>[^<]*<b><span[^>*]>(?<stuInfo>[^<]+)";
-            Match mat = Regex.Match(str, regexStr);
-            string a = mat.Groups["stuInfo"].Value;
+            //获取用户信息
+            string body = Regex.GetMiddleContent(str, "<body", @"</body>", true);
+            
         }
 
         /// <summary>
