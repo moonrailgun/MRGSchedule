@@ -31,6 +31,37 @@ namespace MRGSchedule
 
             return returnStr;
         }
+        /// <summary>
+        /// 获取两端文本中间的文本列表(所有符合条件的)
+        /// </summary>
+        public static List<string> GetMiddleContentList(string originStr, string startStr, string endStr, bool includeEdge = false)
+        {
+            List<string> returnStrs = new List<string>();
+            try
+            {
+                string str = originStr;
+                while (true)
+                {
+                    if (str.Contains(startStr) && str.Contains(endStr))
+                    {
+                        //只有同时存在才进行
+                        string tempStr = GetMiddleContent(str, startStr, endStr, includeEdge);
+                        returnStrs.Add(tempStr);//添加到列表
+                        str = str.Substring(tempStr.Length);
+                    }
+                    else
+                    {
+                        break;//跳出循环
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return returnStrs;
+        }
 
         /// <summary>
         /// 根据正则表达式获取所有匹配的数据
