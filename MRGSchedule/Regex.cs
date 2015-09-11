@@ -20,7 +20,6 @@ namespace MRGSchedule
                 int startIndex = originStr.IndexOf(startStr);
                 returnStr = originStr.Substring(startIndex + startStr.Length);
                 int endIndex = returnStr.IndexOf(endStr);
-                Console.WriteLine(endIndex + "|" + returnStr.Length);
                 returnStr = returnStr.Substring(0, endIndex);
                 if (includeEdge)
                 {
@@ -47,7 +46,8 @@ namespace MRGSchedule
                         //只有同时存在才进行
                         string tempStr = GetMiddleContent(str, startStr, endStr, includeEdge);
                         returnStrs.Add(tempStr);//添加到列表
-                        str = str.Substring(tempStr.Length);
+                        int remainStartIndex = str.IndexOf(tempStr) + tempStr.Length;//剩下字符串的起始索引为匹配到的文本索引+文本长度
+                        str = str.Substring(remainStartIndex);
                     }
                     else
                     {
@@ -87,12 +87,12 @@ namespace MRGSchedule
         /// </summary>
         public static string GetInnerHtml(string originStr)
         {
-            string regexStr = @">([^<]*)</";
+            string regexStr = @">(?<text>[\s\S]*)</";
             string returnStr = "";
             try
             {
                 Match mat = System.Text.RegularExpressions.Regex.Match(originStr, regexStr);
-                returnStr = mat.Groups[0].Value.ToString();
+                returnStr = mat.Groups["text"].Value;
             }
             catch (Exception ex) { Console.WriteLine(ex.ToString()); }
 
