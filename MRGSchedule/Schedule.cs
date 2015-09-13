@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace MRGSchedule
 {
+    [Serializable]
     class Schedule
     {
         private List<Lesson> lessonList = new List<Lesson>();
-
 
         /// <summary>
         /// 导入课程数据（辽工大）
@@ -125,6 +126,45 @@ namespace MRGSchedule
             }
 
         }
+
+
+        #region 序列化
+        /// <summary>
+        /// 将数据序列化为二进制数据流
+        /// PS：如果无法返回修改数据可尝试在stream前加ref关键字（尝试修改）
+        /// </summary>
+        public static void Serialize(Schedule schedule, Stream fStream)
+        {
+            BinaryFormatter binFormat = new BinaryFormatter();
+            try
+            {
+                binFormat.Serialize(fStream, schedule);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 将数据流反序列化为对象
+        /// </summary>
+        public static Schedule Deserialize(Stream stream)
+        {
+            Schedule data = new Schedule();
+            try
+            {
+                BinaryFormatter binFormat = new BinaryFormatter();
+                data = (Schedule)binFormat.Deserialize(stream);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return data;
+        }
+        #endregion
     }
 
     struct Lesson
@@ -143,5 +183,4 @@ namespace MRGSchedule
         星期五 = 5,
         星期六 = 6
     }
-
 }
