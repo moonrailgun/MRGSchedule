@@ -37,12 +37,16 @@ namespace MRGSchedule
             this.BackColor = Color.FromArgb(255 / 2, Color.White);
             this.Width = 7 * 70 + 20;
             this.Height = 6 * 50 + 85;
-            MonthBaseControl.Location = new Point(10, 55);
+            ScheduleBaseControl.Location = new Point(10, 55);
+            ScheduleBaseControl.Width = 7 * 70;
+            ScheduleBaseControl.Height = 500 + 60;
+
+            this.Height = ScheduleBaseControl.Height + 60;
 
             Schedule sc = new Schedule();
-            
+            /*
             sc.ImportSchedule();
-            return;
+            return;*/
 
             GetClockHandle();//获取托盘时钟的句柄
 
@@ -226,7 +230,7 @@ namespace MRGSchedule
             {
                 RefrshSchedule();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
@@ -236,15 +240,64 @@ namespace MRGSchedule
         /// </summary>
         public void RefrshSchedule()
         {
-            /*
+            /*隐藏信息
             if (Frmdaysinfo != null)
             {
                 Frmdaysinfo.Hide();
             }*/
             DuiLabel lbmonth = (DuiLabel)ScWeek.Items[ScWeek.SelectedIndex];
             DuiLabel lbyear = (DuiLabel)ScYear.Items[ScYear.SelectedIndex];
-            DateTime dt = DateTime.Parse(string.Format("{0}-{1}", lbyear.Tag.ToString(), lbmonth.Tag.ToString()));
             //RefreshMonth(dt);
+
+            DuiBaseControl weekTitle = new DuiBaseControl();
+            weekTitle.BackgroundImage = Resources.WeekTitle;
+            weekTitle.BackColor = Color.Transparent;
+            weekTitle.Size = new Size(490, 50);
+            weekTitle.BackgroundImageLayout = ImageLayout.Center;
+            weekTitle.Location = new Point(0, 0);
+            ScheduleBaseControl.DUIControls.Add(weekTitle);
+
+            UpdateScheduleData();//更新课程表信息
+        }
+
+        /// <summary>
+        /// 更新课程表信息
+        /// </summary>
+        private void UpdateScheduleData()
+        {
+            //尝试获取课程表数据，否则显示导入按钮
+            for (int i = 1; i <= 20; i++)
+            {
+                //基础框
+                DuiBaseControl baseControl = new DuiBaseControl();
+                baseControl.Size = new Size(70, 50);
+                baseControl.Location = new Point(i  * 70, i * 50 + 55);//位置
+                baseControl.BackColor = i % 2 == 0 ? Color.FromArgb(30, Color.Gainsboro) : Color.FromArgb(10, Color.Black);//背景色（间隔）
+                baseControl.MouseEnter += LessonItemsMoveEnter;
+                baseControl.MouseLeave += LessonItemsMoveLeave;
+                baseControl.MouseClick += LessonItemsMoveClick;
+                //baseControl.Tag = cc;
+                /*if (cc.Date.Year * 12 * 31 + cc.Date.Month * 31 + cc.Date.Day ==
+                    DateTime.Now.Year * 12 * 31 + DateTime.Now.Month * 31 + DateTime.Now.Day)
+                {
+                    baseControl.BackColor = Color.FromArgb(255, 45, 151, 222);
+                }*/
+                
+                DuiLabel lb = new DuiLabel();
+                lb.Text = i.ToString("00");
+                lb.Font = font2;
+                lb.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
+                //if (cc.WeekDayStr == "星期六" || cc.WeekDayStr == "星期日")
+                //{
+                //    lb.ForeColor = Color.DarkOrange;
+                //}
+                lb.Size = new Size(70, 25);
+                lb.Location = new Point(0, 0);
+                lb.TextAlign = ContentAlignment.MiddleCenter;
+                baseControl.Controls.Add(lb);
+                
+                ScheduleBaseControl.DUIControls.Add(baseControl);
+            }
         }
         #endregion
 
@@ -502,6 +555,28 @@ namespace MRGSchedule
             {
                 LayeredSkin.NativeMethods.MouseToMoveControl(this.Handle);
             }
+        }
+        #endregion
+
+        #region 课程表项目事件
+        /// <summary>
+        /// 鼠标进入用户控件时触发事件
+        /// </summary>
+        private void LessonItemsMoveEnter(object sender, EventArgs e)
+        {
+
+        }
+        /// <summary>
+        /// 鼠标离开用户控件时触发事件
+        /// </summary>
+        private void LessonItemsMoveLeave(object sender, EventArgs e)
+        {
+        }
+        /// <summary>
+        /// 鼠标点击用户控件时触发事件
+        /// </summary>
+        private void LessonItemsMoveClick(object sender, EventArgs e)
+        {
         }
         #endregion
     }
