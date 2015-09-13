@@ -36,10 +36,10 @@ namespace MRGSchedule
             //设置窗体
             this.BackColor = Color.FromArgb(255 / 2, Color.White);
             this.Width = 7 * 70 + 20;
-            this.Height = 6 * 50 + 85;
+            //this.Height = 6 * 50 + 85;
             ScheduleBaseControl.Location = new Point(10, 55);
             ScheduleBaseControl.Width = 7 * 70;
-            ScheduleBaseControl.Height = 500 + 60;
+            ScheduleBaseControl.Height = 5 * 90 + 60;
 
             this.Height = ScheduleBaseControl.Height + 60;
 
@@ -257,21 +257,23 @@ namespace MRGSchedule
             weekTitle.Location = new Point(0, 0);
             ScheduleBaseControl.DUIControls.Add(weekTitle);
 
-            UpdateScheduleData();//更新课程表信息
+            UpdateScheduleData("");//更新课程表信息
         }
 
         /// <summary>
         /// 更新课程表信息
         /// </summary>
-        private void UpdateScheduleData()
+        private void UpdateScheduleData(string scheduleDate)
         {
+
+
             //尝试获取课程表数据，否则显示导入按钮
             for (int i = 1; i <= 20; i++)
             {
                 //基础框
                 DuiBaseControl baseControl = new DuiBaseControl();
-                baseControl.Size = new Size(70, 50);
-                baseControl.Location = new Point(i  * 70, i * 50 + 55);//位置
+                baseControl.Size = new Size(70, 90);
+                baseControl.Location = new Point((i - 1) * 70, (i - 1) * 90 + 55);//位置
                 baseControl.BackColor = i % 2 == 0 ? Color.FromArgb(30, Color.Gainsboro) : Color.FromArgb(10, Color.Black);//背景色（间隔）
                 baseControl.MouseEnter += LessonItemsMoveEnter;
                 baseControl.MouseLeave += LessonItemsMoveLeave;
@@ -282,20 +284,30 @@ namespace MRGSchedule
                 {
                     baseControl.BackColor = Color.FromArgb(255, 45, 151, 222);
                 }*/
-                
+
                 DuiLabel lb = new DuiLabel();
-                lb.Text = i.ToString("00");
-                lb.Font = font2;
+                lb.Text = "课程名课程名课程名";
+                lb.Font = font1;
                 lb.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
                 //if (cc.WeekDayStr == "星期六" || cc.WeekDayStr == "星期日")
                 //{
                 //    lb.ForeColor = Color.DarkOrange;
                 //}
-                lb.Size = new Size(70, 25);
+                lb.Size = new Size(70, 50);
                 lb.Location = new Point(0, 0);
                 lb.TextAlign = ContentAlignment.MiddleCenter;
                 baseControl.Controls.Add(lb);
-                
+
+                lb = new DuiLabel();
+                lb.Size = new Size(70, 25);
+                lb.Location = new Point(0, 65);
+                lb.Text = "教室地点";
+                /*lb.ForeColor = ChinaHoliday ? Color.FromArgb(45, 151, 222) : OtherHoliday ? Color.DarkOrange : Color.Black;*/
+                lb.Font = font1;
+                lb.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
+                lb.TextAlign = ContentAlignment.MiddleCenter;
+                baseControl.Controls.Add(lb);
+
                 ScheduleBaseControl.DUIControls.Add(baseControl);
             }
         }
