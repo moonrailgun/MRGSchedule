@@ -126,6 +126,8 @@ namespace MRGSchedule
 
         }
 
+        public List<Lesson> GetLessonList()
+        { return this.lessonList; }
 
         #region 序列化
         /// <summary>

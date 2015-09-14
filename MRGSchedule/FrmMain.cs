@@ -282,10 +282,10 @@ namespace MRGSchedule
         /// <summary>
         /// 更新课程表信息
         /// </summary>
-        /// <param name="scheduleDate">请求的课程表名，格式为年份+春秋级(秋季01春季02)(e.g.201501)</param>
+        /// <param name="scheduleDate">请求的课程表名，格式为Schedule+年份+春秋级(秋季01春季02)(e.g.201501)</param>
         private void UpdateScheduleData(string scheduleDate)
         {
-            string filePath = dataRootPath + "\\" + scheduleDate + ".sch";
+            string filePath = dataRootPath + "\\Schedule" + scheduleDate + ".sch";
 
             if (!File.Exists(filePath))
             {
@@ -303,30 +303,37 @@ namespace MRGSchedule
                     DialogResult r = fd.ShowDialog();
                     if (r == DialogResult.OK)
                     {
-                        string fileName = fd.FileName;
-                        string extensionName = Path.GetExtension(fileName);
-                        StreamReader sr = new StreamReader(fileName);//读取数据流
-                        if (extensionName == ".sch")
+                        try
                         {
-                            //课程表数据文件-拷贝并导入
-                            Schedule sch = Schedule.Deserialize(sr.BaseStream);
-                            File.Copy(fileName, filePath);
-                            UpdateScheduleData(sch);//更新UI数据
+                            string fileName = fd.FileName;
+                            string extensionName = Path.GetExtension(fileName);
+                            StreamReader sr = new StreamReader(fileName);//读取数据流
+                            if (extensionName == ".sch")
+                            {
+                                //课程表数据文件-拷贝并导入
+                                Schedule sch = Schedule.Deserialize(sr.BaseStream);
+                                File.Copy(fileName, filePath);
+                                UpdateScheduleData(sch);//更新UI数据
+                            }
+                            else
+                            {
+                                //课程表文件
+                                Schedule sch = new Schedule();
+                                sch.ImportSchedule(fileName);//导入数据
+                                Schedule.Serialize(sch, filePath);//保存数据
+
+                                UpdateScheduleData(sch);//更新UI数据
+                            }
+
+                            sr.Close();
+
+                            ScheduleBaseControl.DUIControls.Remove(button);
                         }
-                        else
+                        catch (Exception)
                         {
-                            //课程表文件
-                            Schedule sch = new Schedule();
-                            sch.ImportSchedule(fileName);//导入数据
-                            Schedule.Serialize(sch, filePath);//保存数据
-
-                            UpdateScheduleData(sch);//更新UI数据
+                            MessageBox.Show("导入数据失败请重试");
                         }
-
-                        sr.Close();
                     }
-
-                    ScheduleBaseControl.DUIControls.Remove(button);
                 };
                 ScheduleBaseControl.DUIControls.Add(button);
             }
@@ -341,48 +348,105 @@ namespace MRGSchedule
         }
         private void UpdateScheduleData(Schedule schedule)
         {
-            for (int i = 1; i <= 20; i++)
+            for (int weekNum = 0; weekNum <= 6; weekNum++)
             {
-                //项目基础框
-                DuiBaseControl baseControl = new DuiBaseControl();
-                baseControl.Size = new Size(70, 90);
-                baseControl.Location = new Point((i - 1) * 70, (i - 1) * 90 + 55);//位置
-                baseControl.BackColor = i % 2 == 0 ? Color.FromArgb(30, Color.Gainsboro) : Color.FromArgb(10, Color.Black);//背景色（间隔）
-                baseControl.MouseEnter += LessonItemsMoveEnter;
-                baseControl.MouseLeave += LessonItemsMoveLeave;
-                baseControl.MouseClick += LessonItemsMoveClick;
-                //baseControl.Tag = cc;
-                /*if (cc.Date.Year * 12 * 31 + cc.Date.Month * 31 + cc.Date.Day ==
-                    DateTime.Now.Year * 12 * 31 + DateTime.Now.Month * 31 + DateTime.Now.Day)
+                for (int classNum = 1; classNum <= 5; classNum++)
                 {
-                    baseControl.BackColor = Color.FromArgb(255, 45, 151, 222);
-                }*/
+                    LessonInfo info = null;
+                    foreach (Lesson lesson in schedule.GetLessonList())
+                    {
+                        if (lesson.weekNum == (WeekDay)weekNum && lesson.classNum == classNum)
+                        {
+                            info = lesson.lessonInfo;
+                            break;
+                        }
+                    }
 
-                DuiLabel lb = new DuiLabel();
-                lb.Text = "课程名课程名课程名";
-                lb.Font = font1;
-                lb.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
-                //if (cc.WeekDayStr == "星期六" || cc.WeekDayStr == "星期日")
-                //{
-                //    lb.ForeColor = Color.DarkOrange;
-                //}
-                lb.Size = new Size(70, 50);
-                lb.Location = new Point(0, 0);
-                lb.TextAlign = ContentAlignment.MiddleCenter;
-                baseControl.Controls.Add(lb);
+                    //项目基础框
+                    DuiBaseControl baseControl = new DuiBaseControl();
+                    baseControl.Size = new Size(70, 90);
+                    baseControl.Location = new Point(weekNum * 70, (classNum - 1) * 90 + 55);//位置
+                    baseControl.BackColor = (weekNum + classNum) % 2 == 0 ? Color.FromArgb(30, Color.Gainsboro) : Color.FromArgb(10, Color.Black);//背景色（间隔）
+                    baseControl.MouseEnter += LessonItemsMoveEnter;
+                    baseControl.MouseLeave += LessonItemsMoveLeave;
+                    baseControl.MouseClick += LessonItemsMoveClick;
 
-                lb = new DuiLabel();
-                lb.Size = new Size(70, 25);
-                lb.Location = new Point(0, 65);
-                lb.Text = "教室地点";
-                /*lb.ForeColor = ChinaHoliday ? Color.FromArgb(45, 151, 222) : OtherHoliday ? Color.DarkOrange : Color.Black;*/
-                lb.Font = font1;
-                lb.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
-                lb.TextAlign = ContentAlignment.MiddleCenter;
-                baseControl.Controls.Add(lb);
+                    if (info != null)
+                    {
+                        DuiLabel lb = new DuiLabel();
+                        lb.Text = info.lessonName;
+                        lb.Font = font1;
+                        lb.Location = new Point(0, 10);
+                        lb.Size = new Size(70, 50);
+                        if (weekNum == (int)WeekDay.星期日 || weekNum == (int)WeekDay.星期六)
+                        {
+                            lb.ForeColor = Color.DarkOrange;
+                        }
+                        lb.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
+                        lb.TextAlign = ContentAlignment.TopCenter;
+                        baseControl.Controls.Add(lb);
 
-                ScheduleBaseControl.DUIControls.Add(baseControl);
+
+                        lb = new DuiLabel();
+                        lb.Text = info.lessonSite;
+                        lb.Font = font1;
+                        lb.Location = new Point(0, 60);
+                        lb.Size = new Size(70, 25);
+                        if (weekNum == (int)WeekDay.星期日 || weekNum == (int)WeekDay.星期六)
+                        {
+                            lb.ForeColor = Color.DarkOrange;
+                        }
+                        lb.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
+                        lb.TextAlign = ContentAlignment.MiddleCenter;
+                        baseControl.Controls.Add(lb);
+                    }
+
+                    ScheduleBaseControl.DUIControls.Add(baseControl);
+                }
             }
+
+            //for (int i = 1; i <= 20; i++)
+            //{
+            //    //项目基础框
+            //    DuiBaseControl baseControl = new DuiBaseControl();
+            //    baseControl.Size = new Size(70, 90);
+            //    baseControl.Location = new Point((i - 1) * 70, (i - 1) * 90 + 55);//位置
+            //    baseControl.BackColor = i % 2 == 0 ? Color.FromArgb(30, Color.Gainsboro) : Color.FromArgb(10, Color.Black);//背景色（间隔）
+            //    baseControl.MouseEnter += LessonItemsMoveEnter;
+            //    baseControl.MouseLeave += LessonItemsMoveLeave;
+            //    baseControl.MouseClick += LessonItemsMoveClick;
+            //    //baseControl.Tag = cc;
+            //    /*if (cc.Date.Year * 12 * 31 + cc.Date.Month * 31 + cc.Date.Day ==
+            //        DateTime.Now.Year * 12 * 31 + DateTime.Now.Month * 31 + DateTime.Now.Day)
+            //    {
+            //        baseControl.BackColor = Color.FromArgb(255, 45, 151, 222);
+            //    }*/
+
+            //    DuiLabel lb = new DuiLabel();
+            //    lb.Text = "课程名课程名课程名";
+            //    lb.Font = font1;
+            //    lb.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
+            //    //if (cc.WeekDayStr == "星期六" || cc.WeekDayStr == "星期日")
+            //    //{
+            //    //    lb.ForeColor = Color.DarkOrange;
+            //    //}
+            //    lb.Size = new Size(70, 50);
+            //    lb.Location = new Point(0, 0);
+            //    lb.TextAlign = ContentAlignment.MiddleCenter;
+            //    baseControl.Controls.Add(lb);
+
+            //    lb = new DuiLabel();
+            //    lb.Size = new Size(70, 25);
+            //    lb.Location = new Point(0, 65);
+            //    lb.Text = "教室地点";
+            //    /*lb.ForeColor = ChinaHoliday ? Color.FromArgb(45, 151, 222) : OtherHoliday ? Color.DarkOrange : Color.Black;*/
+            //    lb.Font = font1;
+            //    lb.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
+            //    lb.TextAlign = ContentAlignment.MiddleCenter;
+            //    baseControl.Controls.Add(lb);
+
+            //    ScheduleBaseControl.DUIControls.Add(baseControl);
+            //}
         }
         #endregion
 
