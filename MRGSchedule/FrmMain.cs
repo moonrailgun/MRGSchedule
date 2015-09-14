@@ -373,6 +373,8 @@ namespace MRGSchedule
 
                     if (info != null)
                     {
+                        baseControl.Tag = info;
+
                         DuiLabel lb = new DuiLabel();
                         lb.Text = info.lessonName;
                         lb.Font = font1;
@@ -404,49 +406,6 @@ namespace MRGSchedule
                     ScheduleBaseControl.DUIControls.Add(baseControl);
                 }
             }
-
-            //for (int i = 1; i <= 20; i++)
-            //{
-            //    //项目基础框
-            //    DuiBaseControl baseControl = new DuiBaseControl();
-            //    baseControl.Size = new Size(70, 90);
-            //    baseControl.Location = new Point((i - 1) * 70, (i - 1) * 90 + 55);//位置
-            //    baseControl.BackColor = i % 2 == 0 ? Color.FromArgb(30, Color.Gainsboro) : Color.FromArgb(10, Color.Black);//背景色（间隔）
-            //    baseControl.MouseEnter += LessonItemsMoveEnter;
-            //    baseControl.MouseLeave += LessonItemsMoveLeave;
-            //    baseControl.MouseClick += LessonItemsMoveClick;
-            //    //baseControl.Tag = cc;
-            //    /*if (cc.Date.Year * 12 * 31 + cc.Date.Month * 31 + cc.Date.Day ==
-            //        DateTime.Now.Year * 12 * 31 + DateTime.Now.Month * 31 + DateTime.Now.Day)
-            //    {
-            //        baseControl.BackColor = Color.FromArgb(255, 45, 151, 222);
-            //    }*/
-
-            //    DuiLabel lb = new DuiLabel();
-            //    lb.Text = "课程名课程名课程名";
-            //    lb.Font = font1;
-            //    lb.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
-            //    //if (cc.WeekDayStr == "星期六" || cc.WeekDayStr == "星期日")
-            //    //{
-            //    //    lb.ForeColor = Color.DarkOrange;
-            //    //}
-            //    lb.Size = new Size(70, 50);
-            //    lb.Location = new Point(0, 0);
-            //    lb.TextAlign = ContentAlignment.MiddleCenter;
-            //    baseControl.Controls.Add(lb);
-
-            //    lb = new DuiLabel();
-            //    lb.Size = new Size(70, 25);
-            //    lb.Location = new Point(0, 65);
-            //    lb.Text = "教室地点";
-            //    /*lb.ForeColor = ChinaHoliday ? Color.FromArgb(45, 151, 222) : OtherHoliday ? Color.DarkOrange : Color.Black;*/
-            //    lb.Font = font1;
-            //    lb.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
-            //    lb.TextAlign = ContentAlignment.MiddleCenter;
-            //    baseControl.Controls.Add(lb);
-
-            //    ScheduleBaseControl.DUIControls.Add(baseControl);
-            //}
         }
         #endregion
 
@@ -713,19 +672,31 @@ namespace MRGSchedule
         /// </summary>
         private void LessonItemsMoveEnter(object sender, EventArgs e)
         {
-
+            ((DuiBaseControl)sender).Borders.LeftWidth =
+                ((DuiBaseControl)sender).Borders.RightWidth =
+                    ((DuiBaseControl)sender).Borders.TopWidth = ((DuiBaseControl)sender).Borders.BottomWidth = 1;
+            ((DuiBaseControl)sender).Borders.LeftColor =
+                ((DuiBaseControl)sender).Borders.RightColor =
+                    ((DuiBaseControl)sender).Borders.TopColor = ((DuiBaseControl)sender).Borders.BottomColor = Color.FromArgb(160, 208, 240);
         }
         /// <summary>
         /// 鼠标离开用户控件时触发事件
         /// </summary>
         private void LessonItemsMoveLeave(object sender, EventArgs e)
         {
+            ((DuiBaseControl)sender).Borders.LeftWidth =
+                ((DuiBaseControl)sender).Borders.RightWidth =
+                    ((DuiBaseControl)sender).Borders.TopWidth = ((DuiBaseControl)sender).Borders.BottomWidth = 0;
         }
+
         /// <summary>
         /// 鼠标点击用户控件时触发事件
         /// </summary>
         private void LessonItemsMoveClick(object sender, EventArgs e)
         {
+            LessonInfo info = (LessonInfo)((DuiBaseControl)sender).Tag;
+
+            MessageBox.Show(info.lessonName);
         }
         #endregion
     }
