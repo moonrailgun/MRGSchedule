@@ -25,6 +25,7 @@ namespace MRGSchedule
         #endregion
 
         public DuiComboBox ScYear;
+        public DuiCheckBox ScSeason;
         public DuiComboBox ScWeek;
         public DuiLabel DateTimeNow;
         public string dataRootPath = Application.StartupPath + "/scheduleData";
@@ -34,7 +35,7 @@ namespace MRGSchedule
         public FrmMain()
         {
             InitializeComponent();
-            //创建数据目录
+                //创建数据目录
             try
             {
                 if (!Directory.Exists(dataRootPath))
@@ -52,9 +53,6 @@ namespace MRGSchedule
                 this.Height = ScheduleBaseControl.Height + 60;
 
                 Schedule sc = new Schedule();
-                /*
-                sc.ImportSchedule();
-                return;*/
 
                 GetClockHandle();//获取托盘时钟的句柄
 
@@ -101,22 +99,24 @@ namespace MRGSchedule
             #endregion
 
             #region 添加春秋季标识
-            DuiCheckBox cbseason = new DuiCheckBox();
-            cbseason.Location = new Point(65, 12);
-            cbseason.CheckRectWidth = 20;
-            cbseason.UncheckedNormal = Resources.Autumn;//未选中为秋，选中为春。
-            cbseason.CheckedNormal = Resources.Spring;
-            DataSelectControl.DUIControls.Add(cbseason);
+            ScSeason = new DuiCheckBox();
+            ScSeason.Location = new Point(65, 12);
+            ScSeason.CheckRectWidth = 20;
+            ScSeason.UncheckedNormal = Resources.Autumn;//未选中为秋，选中为春。
+            ScSeason.CheckedNormal = Resources.Spring;
+            ScSeason.CheckedChanged += CBSelectedIndexChanged;
+            DataSelectControl.DUIControls.Add(ScSeason);
             #endregion
 
             #region 添加年份列表
+            int latestYear = DateTime.Now.Year;
             ScYear = new DuiComboBox();
             ScYear.BaseColor = Color.White;
             ScYear.BackColor = Color.White;
             ScYear.Size = new Size(85, 25);
             ScYear.Location = new Point(90, 10);
             ScYear.SelectedIndexChanged += CBSelectedIndexChanged;
-            for (int i = 1995; i < 2021; i++)
+            for (int i = 1995; i <= latestYear; i++)
             {
                 DuiLabel lb = new DuiLabel();
                 lb.Text = string.Format("  {0}年", i);
@@ -134,7 +134,7 @@ namespace MRGSchedule
                 if (i == DateTime.Now.Year)
                 {
                     ScYear.SelectedIndex = i - 1995;
-                    ScYear.InnerListBox.Value = (double)i / (double)(2020);
+                    ScYear.InnerListBox.Value = (double)i / (double)(latestYear);
                 }
             }
             ScYear.ShowBorder = false;
@@ -259,14 +259,11 @@ namespace MRGSchedule
         /// </summary>
         public void RefrshSchedule()
         {
-            /*隐藏信息
-            if (Frmdaysinfo != null)
-            {
-                Frmdaysinfo.Hide();
-            }*/
             DuiLabel lbmonth = (DuiLabel)ScWeek.Items[ScWeek.SelectedIndex];
             DuiLabel lbyear = (DuiLabel)ScYear.Items[ScYear.SelectedIndex];
-            //RefreshMonth(dt);
+
+            //清除控件
+            ScheduleBaseControl.DUIControls.Clear();
 
             DuiBaseControl weekTitle = new DuiBaseControl();
             weekTitle.BackgroundImage = Resources.WeekTitle;
@@ -276,14 +273,18 @@ namespace MRGSchedule
             weekTitle.Location = new Point(0, 0);
             ScheduleBaseControl.DUIControls.Add(weekTitle);
 
-            UpdateScheduleData("201501");//更新课程表信息
+            //获取日期数据
+            DuiLabel year = (DuiLabel)this.ScYear.Items[ScYear.SelectedIndex];
+            DuiLabel week = (DuiLabel)this.ScWeek.Items[ScWeek.SelectedIndex];
+            bool season = this.ScSeason.Checked;
+            UpdateScheduleData(string.Format("{0}{1}", year.Tag.ToString(), Convert.ToInt32(season).ToString("00")), Convert.ToInt32(week.Tag));//更新课程表信息
         }
 
         /// <summary>
         /// 更新课程表信息
         /// </summary>
         /// <param name="scheduleDate">请求的课程表名，格式为Schedule+年份+春秋级(秋季01春季02)(e.g.201501)</param>
-        private void UpdateScheduleData(string scheduleDate)
+        private void UpdateScheduleData(string scheduleDate, int weekNum)
         {
             string filePath = dataRootPath + "\\Schedule" + scheduleDate + ".sch";
 
@@ -313,7 +314,7 @@ namespace MRGSchedule
                                 //课程表数据文件-拷贝并导入
                                 Schedule sch = Schedule.Deserialize(sr.BaseStream);
                                 File.Copy(fileName, filePath);
-                                UpdateScheduleData(sch);//更新UI数据
+                                UpdateScheduleData(sch, weekNum);//更新UI数据
                             }
                             else
                             {
@@ -322,7 +323,7 @@ namespace MRGSchedule
                                 sch.ImportSchedule(fileName);//导入数据
                                 Schedule.Serialize(sch, filePath);//保存数据
 
-                                UpdateScheduleData(sch);//更新UI数据
+                                UpdateScheduleData(sch, weekNum);//更新UI数据
                             }
 
                             sr.Close();
@@ -343,10 +344,10 @@ namespace MRGSchedule
                 StreamReader sr = new StreamReader(filePath);//读取数据流
                 Schedule sch = Schedule.Deserialize(sr.BaseStream);
                 sr.Close();
-                UpdateScheduleData(sch);
+                UpdateScheduleData(sch, weekNum);
             }
         }
-        private void UpdateScheduleData(Schedule schedule)
+        private void UpdateScheduleData(Schedule schedule, int selectWeekNum)
         {
             for (int weekNum = 0; weekNum <= 6; weekNum++)
             {
@@ -382,7 +383,13 @@ namespace MRGSchedule
                         lb.Size = new Size(70, 50);
                         if (weekNum == (int)WeekDay.星期日 || weekNum == (int)WeekDay.星期六)
                         {
+                            //假期变黄
                             lb.ForeColor = Color.DarkOrange;
+                        }
+                        if (info.lessonStartWeek > selectWeekNum || info.lessonOverWeek < selectWeekNum)
+                        {
+                            //未开课|结课为灰度
+                            lb.ForeColor = Color.Gray;
                         }
                         lb.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
                         lb.TextAlign = ContentAlignment.TopCenter;
@@ -396,7 +403,13 @@ namespace MRGSchedule
                         lb.Size = new Size(70, 25);
                         if (weekNum == (int)WeekDay.星期日 || weekNum == (int)WeekDay.星期六)
                         {
+                            //假期变黄
                             lb.ForeColor = Color.DarkOrange;
+                        }
+                        if (info.lessonStartWeek > selectWeekNum || info.lessonOverWeek < selectWeekNum)
+                        {
+                            //未开课|结课为灰度
+                            lb.ForeColor = Color.Gray;
                         }
                         lb.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
                         lb.TextAlign = ContentAlignment.MiddleCenter;
@@ -450,26 +463,7 @@ namespace MRGSchedule
         //点击【今天】按钮
         private void BtnTodayClick(object sender, DuiMouseEventArgs e)
         {
-            /*
-            for (int i = 0; i < CbYear.Items.Count; i++)
-            {
-                DuiLabel lbyear = (DuiLabel)CbYear.Items[i];
-                if ((int)lbyear.Tag == DateTime.Now.Year)
-                {
-                    CbYear.SelectedIndex = i;
-                    break;
-                }
-            }
-            for (int i = 0; i < CbMonth.Items.Count; i++)
-            {
-                DuiLabel lbmonth = (DuiLabel)CbMonth.Items[i];
-                if ((int)lbmonth.Tag == DateTime.Now.Month)
-                {
-                    CbMonth.SelectedIndex = i;
-                    break;
-                }
-            }
-             */
+
         }
 
         #region 时钟窗口句柄
@@ -694,9 +688,13 @@ namespace MRGSchedule
         /// </summary>
         private void LessonItemsMoveClick(object sender, EventArgs e)
         {
-            LessonInfo info = (LessonInfo)((DuiBaseControl)sender).Tag;
+            try
+            {
+                LessonInfo info = (LessonInfo)((DuiBaseControl)sender).Tag;
 
-            MessageBox.Show(info.lessonName);
+                MessageBox.Show(info.lessonName);
+            }
+            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
         }
         #endregion
     }
