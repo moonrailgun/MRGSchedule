@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Text;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -26,33 +27,42 @@ namespace MRGSchedule
         public DuiComboBox ScYear;
         public DuiComboBox ScWeek;
         public DuiLabel DateTimeNow;
+        public string dataRootPath = Application.StartupPath + "/scheduleData";
 
         public int clockHandle;
 
         public FrmMain()
         {
             InitializeComponent();
+            //创建数据目录
+            try
+            {
+                if (!Directory.Exists(dataRootPath))
+                {
+                    Directory.CreateDirectory(dataRootPath);
+                }
 
-            //设置窗体
-            this.BackColor = Color.FromArgb(255 / 2, Color.White);
-            this.Width = 7 * 70 + 20;
-            //this.Height = 6 * 50 + 85;
-            ScheduleBaseControl.Location = new Point(10, 55);
-            ScheduleBaseControl.Width = 7 * 70;
-            ScheduleBaseControl.Height = 5 * 90 + 60;
 
-            this.Height = ScheduleBaseControl.Height + 60;
+                //设置窗体
+                this.BackColor = Color.FromArgb(255 / 2, Color.White);
+                ScheduleBaseControl.Location = new Point(10, 55);
+                ScheduleBaseControl.Width = 7 * 70;
+                ScheduleBaseControl.Height = 5 * 90 + 60;
+                this.Width = 7 * 70 + 20;
+                this.Height = ScheduleBaseControl.Height + 60;
 
-            Schedule sc = new Schedule();
-            /*
-            sc.ImportSchedule();
-            return;*/
+                Schedule sc = new Schedule();
+                /*
+                sc.ImportSchedule();
+                return;*/
 
-            GetClockHandle();//获取托盘时钟的句柄
+                GetClockHandle();//获取托盘时钟的句柄
 
-            CreatDataSelectControl();
+                CreatDataSelectControl();
 
-            //HookStart();//开始hook
+                //HookStart();//开始hook
+            }
+            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
         }
 
         //创建菜单栏控件
@@ -92,7 +102,7 @@ namespace MRGSchedule
 
             #region 添加春秋季标识
             DuiCheckBox cbseason = new DuiCheckBox();
-            cbseason.Location = new Point(60, 10);
+            cbseason.Location = new Point(65, 12);
             cbseason.CheckRectWidth = 20;
             cbseason.UncheckedNormal = Resources.Autumn;//未选中为秋，选中为春。
             cbseason.CheckedNormal = Resources.Spring;
@@ -266,20 +276,74 @@ namespace MRGSchedule
             weekTitle.Location = new Point(0, 0);
             ScheduleBaseControl.DUIControls.Add(weekTitle);
 
-            UpdateScheduleData("");//更新课程表信息
+            UpdateScheduleData("201501");//更新课程表信息
         }
 
         /// <summary>
         /// 更新课程表信息
         /// </summary>
+        /// <param name="scheduleDate">请求的课程表名，格式为年份+春秋级(秋季01春季02)(e.g.201501)</param>
         private void UpdateScheduleData(string scheduleDate)
         {
+            string filePath = dataRootPath + "\\" + scheduleDate + ".sch";
 
+            if (!File.Exists(filePath))
+            {
+                //如果不存在数据文件。显示导入按钮
+                DuiButton button = new DuiButton();
+                button.Text = "导入课程表文件";
+                button.Size = new Size(100, 40);
+                button.Location = new Point(ScheduleBaseControl.Width / 2 - 50, ScheduleBaseControl.Height / 2 - 20);
+                button.MouseClick += (sender, e) =>
+                {
+                    OpenFileDialog fd = new OpenFileDialog();
+                    fd.Filter = "课程表文件(*.doc)|*.doc|课程表数据文件(*.sch)|*.sch|All files (*.*)|*.*"; //过滤文件类型
+                    fd.InitialDirectory = Path.Combine(Application.StartupPath, "scheduleData");//设定初始目录
+                    fd.ShowReadOnly = true; //设定文件是否只读
+                    DialogResult r = fd.ShowDialog();
+                    if (r == DialogResult.OK)
+                    {
+                        string fileName = fd.FileName;
+                        string extensionName = Path.GetExtension(fileName);
+                        StreamReader sr = new StreamReader(fileName);//读取数据流
+                        if (extensionName == ".sch")
+                        {
+                            //课程表数据文件-拷贝并导入
+                            Schedule sch = Schedule.Deserialize(sr.BaseStream);
+                            File.Copy(fileName, filePath);
+                            UpdateScheduleData(sch);//更新UI数据
+                        }
+                        else
+                        {
+                            //课程表文件
+                            Schedule sch = new Schedule();
+                            sch.ImportSchedule(fileName);//导入数据
+                            Schedule.Serialize(sch, filePath);//保存数据
 
-            //尝试获取课程表数据，否则显示导入按钮
+                            UpdateScheduleData(sch);//更新UI数据
+                        }
+
+                        sr.Close();
+                    }
+
+                    ScheduleBaseControl.DUIControls.Remove(button);
+                };
+                ScheduleBaseControl.DUIControls.Add(button);
+            }
+            else
+            {
+                //有数据文件
+                StreamReader sr = new StreamReader(filePath);//读取数据流
+                Schedule sch = Schedule.Deserialize(sr.BaseStream);
+                sr.Close();
+                UpdateScheduleData(sch);
+            }
+        }
+        private void UpdateScheduleData(Schedule schedule)
+        {
             for (int i = 1; i <= 20; i++)
             {
-                //基础框
+                //项目基础框
                 DuiBaseControl baseControl = new DuiBaseControl();
                 baseControl.Size = new Size(70, 90);
                 baseControl.Location = new Point((i - 1) * 70, (i - 1) * 90 + 55);//位置

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MRGSchedule
 {
+    [Serializable]
     class LessonInfo
     {
         public string lessonName = "";

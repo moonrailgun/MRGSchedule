@@ -16,9 +16,8 @@ namespace MRGSchedule
         /// <summary>
         /// 导入课程数据（辽工大）
         /// </summary>
-        public void ImportSchedule()
+        public void ImportSchedule(string filePath)
         {
-            string filePath = @"C:\Users\Chen\Downloads\schedule.doc";
             StreamReader temp = new StreamReader(filePath);
             StreamReader sr = new StreamReader(temp.BaseStream, Encoding.Default);//GBK编码获取数据
             string str = sr.ReadToEnd();
@@ -130,20 +129,23 @@ namespace MRGSchedule
 
         #region 序列化
         /// <summary>
-        /// 将数据序列化为二进制数据流
+        /// 将数据序列化为二进制数据流并保存
         /// PS：如果无法返回修改数据可尝试在stream前加ref关键字（尝试修改）
         /// </summary>
-        public static void Serialize(Schedule schedule, Stream fStream)
+        public static void Serialize(Schedule sch, string filePath)
         {
             BinaryFormatter binFormat = new BinaryFormatter();
+            FileStream fStream = new FileStream(filePath, FileMode.Create);
             try
             {
-                binFormat.Serialize(fStream, schedule);
+                binFormat.Serialize(fStream, sch);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
+
+            fStream.Close();
         }
 
         /// <summary>
@@ -167,6 +169,7 @@ namespace MRGSchedule
         #endregion
     }
 
+    [Serializable]
     struct Lesson
     {
         public WeekDay weekNum;//星期几
