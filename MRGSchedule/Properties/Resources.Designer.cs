@@ -63,6 +63,16 @@ namespace MRGSchedule.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap Autumn {
+            get {
+                object obj = ResourceManager.GetObject("Autumn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap before_d {
             get {
                 object obj = ResourceManager.GetObject("before_d", resourceCulture);
@@ -176,6 +186,16 @@ namespace MRGSchedule.Properties {
         internal static System.Drawing.Bitmap next_n {
             get {
                 object obj = ResourceManager.GetObject("next_n", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap Spring {
+            get {
+                object obj = ResourceManager.GetObject("Spring", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

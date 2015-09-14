@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="Resources\Autumn.png" />
     <Content Include="Resources\before_d.png" />
     <Content Include="Resources\before_e.png" />
     <Content Include="Resources\before_n.png" />
@@ -114,7 +115,10 @@
     <Content Include="Resources\next_d.png" />
     <Content Include="Resources\next_e.png" />
     <Content Include="Resources\next_n.png" />
+    <None Include="Resources\Spring.png" />
     <Content Include="Resources\WeekTitle.png" />
+    <Content Include="Resources\春.png" />
+    <Content Include="Resources\秋.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -81,13 +81,22 @@ namespace MRGSchedule
             #endregion
 
             #region 添加今天按钮
-            DuiButton bttaday = new DuiButton();
-            bttaday.Location = new Point(15, 0);
-            bttaday.NormalImage = Resources.BtnTodayn;
-            bttaday.HoverImage = Resources.BtnTodaye;
-            bttaday.PressedImage = Resources.BtnTodayd;
-            bttaday.MouseClick += BtnTodayClick;
-            DataSelectControl.DUIControls.Add(bttaday);
+            DuiButton bttoday = new DuiButton();
+            bttoday.Location = new Point(15, 0);
+            bttoday.NormalImage = Resources.BtnTodayn;
+            bttoday.HoverImage = Resources.BtnTodaye;
+            bttoday.PressedImage = Resources.BtnTodayd;
+            bttoday.MouseClick += BtnTodayClick;
+            DataSelectControl.DUIControls.Add(bttoday);
+            #endregion
+
+            #region 添加春秋季标识
+            DuiCheckBox cbseason = new DuiCheckBox();
+            cbseason.Location = new Point(60, 10);
+            cbseason.CheckRectWidth = 20;
+            cbseason.UncheckedNormal = Resources.Autumn;//未选中为秋，选中为春。
+            cbseason.CheckedNormal = Resources.Spring;
+            DataSelectControl.DUIControls.Add(cbseason);
             #endregion
 
             #region 添加年份列表
@@ -95,7 +104,7 @@ namespace MRGSchedule
             ScYear.BaseColor = Color.White;
             ScYear.BackColor = Color.White;
             ScYear.Size = new Size(85, 25);
-            ScYear.Location = new Point(85, 10);
+            ScYear.Location = new Point(90, 10);
             ScYear.SelectedIndexChanged += CBSelectedIndexChanged;
             for (int i = 1995; i < 2021; i++)
             {
@@ -127,7 +136,7 @@ namespace MRGSchedule
 
             #region 添加上一月按钮
             DuiButton btbefore = new DuiButton();
-            btbefore.Location = new Point(180, 12);
+            btbefore.Location = new Point(185, 12);
             btbefore.NormalImage = Resources.before_n;
             btbefore.HoverImage = Resources.before_e;
             btbefore.PressedImage = Resources.before_d;
@@ -140,7 +149,7 @@ namespace MRGSchedule
             ScWeek.BaseColor = Color.White;
             ScWeek.BackColor = Color.White;
             ScWeek.Size = new Size(65, 25);
-            ScWeek.Location = new Point(205, 10);
+            ScWeek.Location = new Point(210, 10);
             ScWeek.SelectedIndexChanged += CBSelectedIndexChanged;
             for (int i = 1; i <= 20; i++)
             {
@@ -172,7 +181,7 @@ namespace MRGSchedule
 
             #region 添加下一月按钮
             DuiButton btnext = new DuiButton();
-            btnext.Location = new Point(275, 12);
+            btnext.Location = new Point(280, 12);
             btnext.NormalImage = Resources.next_n;
             btnext.HoverImage = Resources.next_e;
             btnext.PressedImage = Resources.next_d;
