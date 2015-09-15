@@ -28,16 +28,17 @@ namespace MRGSchedule
         public DuiCheckBox ScSeason;
         public DuiComboBox ScWeek;
         public DuiLabel DateTimeNow;
-        public string dataRootPath = Application.StartupPath + "/scheduleData";
+        public string dataRootPath = Path.Combine(Application.StartupPath, "scheduleData");
+        public string iniPath = Path.Combine(Application.StartupPath, "config.ini");
 
         public int clockHandle;
 
         public FrmMain()
         {
             InitializeComponent();
-                //创建数据目录
             try
             {
+                //创建数据目录
                 if (!Directory.Exists(dataRootPath))
                 {
                     Directory.CreateDirectory(dataRootPath);
@@ -51,6 +52,7 @@ namespace MRGSchedule
                 ScheduleBaseControl.Height = 5 * 90 + 60;
                 this.Width = 7 * 70 + 20;
                 this.Height = ScheduleBaseControl.Height + 60;
+                this.FormClosing += FrmMain_FormClosing;
 
                 Schedule sc = new Schedule();
 
@@ -59,8 +61,39 @@ namespace MRGSchedule
                 CreatDataSelectControl();
 
                 //HookStart();//开始hook
+
+                //设置初始数据
+                if (File.Exists(iniPath))
+                {
+                    try
+                    {
+                        string yearIndex = GetIniContentValue("config", "yearIndex", iniPath);
+                        ScYear.SelectedIndex = yearIndex != "" ? Convert.ToInt32(yearIndex) : ScYear.Controls.Count - 1;
+
+                        string weekIndex = GetIniContentValue("config", "weekIndex", iniPath);
+                        ScWeek.SelectedIndex = weekIndex != "" ? Convert.ToInt32(weekIndex) : ScWeek.Controls.Count - 1;
+
+                        string seasonIndex = GetIniContentValue("config", "seasonIndex", iniPath);
+                        ScSeason.Checked = seasonIndex != "" ? Convert.ToBoolean(seasonIndex) : false;
+                    }
+                    catch { }
+                }
             }
             catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+        }
+
+        void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                WritePrivateProfileString("config", "yearIndex", ScYear.SelectedIndex.ToString(), iniPath);
+                WritePrivateProfileString("config", "weekIndex", ScWeek.SelectedIndex.ToString(), iniPath);
+                WritePrivateProfileString("config", "seasonIndex", ScSeason.Checked.ToString(), iniPath);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         //创建菜单栏控件
@@ -696,6 +729,38 @@ namespace MRGSchedule
             }
             catch (Exception ex) { Console.WriteLine(ex.ToString()); }
         }
+        #endregion
+
+        #region ini操作
+        /// <summary>
+        /// section：要读取的段落名
+        /// key: 要读取的键
+        /// defVal: 读取异常的情况下的缺省值
+        /// retVal: key所对应的值，如果该key不存在则返回空值
+        /// size: 值允许的大小
+        /// filePath: INI文件的完整路径和文件名
+        /// </summary>
+        [DllImport("kernel32")]
+        private static extern int GetPrivateProfileString(string section, string key, string defVal, StringBuilder retVal, int size, string filePath);
+
+        /// <summary>
+        /// 自定义读取INI文件中的内容方法
+        /// </summary>
+        private string GetIniContentValue(string section, string key, string path)
+        {
+            StringBuilder temp = new StringBuilder(1024);
+            GetPrivateProfileString(section, key, "", temp, 1024, path);
+            return temp.ToString();
+        }
+
+        /// <summary>
+        /// section: 要写入的段落名
+        /// key: 要写入的键，如果该key存在则覆盖写入
+        /// val: key所对应的值
+        /// filePath: INI文件的完整路径和文件名
+        /// </summary>
+        [DllImport("kernel32")]
+        private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
         #endregion
     }
 }
