@@ -116,6 +116,9 @@
     <Content Include="Resources\next_e.png" />
     <Content Include="Resources\next_n.png" />
     <None Include="Resources\Spring.png" />
+    <Content Include="Resources\SettingD.png" />
+    <Content Include="Resources\SettingE.png" />
+    <Content Include="Resources\SettingN.png" />
     <Content Include="Resources\WeekTitle.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

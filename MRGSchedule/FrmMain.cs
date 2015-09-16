@@ -55,12 +55,15 @@ namespace MRGSchedule
                 this.FormClosing += FrmMain_FormClosing;
 
                 Schedule sc = new Schedule();
-
-                GetClockHandle();//获取托盘时钟的句柄
+                
+                
 
                 CreatDataSelectControl();
-
+                /*
+                GetClockHandle();//获取托盘时钟的句柄
+                
                 //HookStart();//开始hook
+                */
 
                 //设置初始数据
                 if (File.Exists(iniPath))
@@ -240,12 +243,25 @@ namespace MRGSchedule
             DateTimeNow.ForeColor = Color.DodgerBlue;
             DateTimeNow.TextRenderMode = TextRenderingHint.AntiAliasGridFit;
             DateTimeNow.Size = new Size(110, 20);
-            DateTimeNow.Location = new Point(325, 12);
+            DateTimeNow.Location = new Point(315, 12);
             DataSelectControl.DUIControls.Add(DateTimeNow);
             Timer dateTimer = new Timer();//添加计时器
             dateTimer.Tick += (sender, e) => { DateTimeNow.Text = DateTime.Now.ToString("HH:mm:ss"); };
             dateTimer.Interval = 1000;
             dateTimer.Start();
+            #endregion
+
+            #region 添加设置按钮
+            DuiButton btSetting = new DuiButton();
+            btSetting.NormalImage = Resources.SettingN;
+            btSetting.HoverImage = Resources.SettingE;
+            btSetting.PressedImage = Resources.SettingD;
+            btSetting.Location = new Point(DataSelectControl.Width - 70, 8);
+            btSetting.MouseClick += (sender, e) =>
+            {
+                //打开设置窗口
+            };
+            DataSelectControl.DUIControls.Add(btSetting);
             #endregion
 
             #region 添加关闭按钮
