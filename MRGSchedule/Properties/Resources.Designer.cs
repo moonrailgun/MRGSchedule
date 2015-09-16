@@ -133,6 +133,26 @@ namespace MRGSchedule.Properties {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap CheckboxD {
+            get {
+                object obj = ResourceManager.GetObject("CheckboxD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap CheckboxE {
+            get {
+                object obj = ResourceManager.GetObject("CheckboxE", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap CloseD {
             get {
                 object obj = ResourceManager.GetObject("CloseD", resourceCulture);

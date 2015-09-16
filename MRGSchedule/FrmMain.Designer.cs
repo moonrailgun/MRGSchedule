@@ -81,7 +81,6 @@
             this.DataSelectControl.Borders.RightWidth = 1;
             this.DataSelectControl.Borders.TopColor = System.Drawing.Color.Empty;
             this.DataSelectControl.Borders.TopWidth = 1;
-            this.DataSelectControl.Canvas = ((System.Drawing.Bitmap)(resources.GetObject("DataSelectControl.Canvas")));
             this.DataSelectControl.Location = new System.Drawing.Point(12, 12);
             this.DataSelectControl.Name = "DataSelectControl";
             this.DataSelectControl.Size = new System.Drawing.Size(280, 25);

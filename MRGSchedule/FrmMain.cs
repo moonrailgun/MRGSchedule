@@ -28,6 +28,7 @@ namespace MRGSchedule
         public DuiCheckBox ScSeason;
         public DuiComboBox ScWeek;
         public DuiLabel DateTimeNow;
+        public FrmSetting settingFrm;
         public string dataRootPath = Path.Combine(Application.StartupPath, "scheduleData");
         public string iniPath = Path.Combine(Application.StartupPath, "config.ini");
 
@@ -55,8 +56,8 @@ namespace MRGSchedule
                 this.FormClosing += FrmMain_FormClosing;
 
                 Schedule sc = new Schedule();
-                
-                
+
+
 
                 CreatDataSelectControl();
                 /*
@@ -190,7 +191,7 @@ namespace MRGSchedule
             DataSelectControl.DUIControls.Add(btbefore);
             #endregion
 
-            #region 添加月份列表
+            #region 添加周数列表
             ScWeek = new DuiComboBox();
             ScWeek.BaseColor = Color.White;
             ScWeek.BackColor = Color.White;
@@ -259,7 +260,9 @@ namespace MRGSchedule
             btSetting.Location = new Point(DataSelectControl.Width - 70, 8);
             btSetting.MouseClick += (sender, e) =>
             {
-                //打开设置窗口
+                if (settingFrm == null)
+                    settingFrm = new FrmSetting();
+                settingFrm.Show();
             };
             DataSelectControl.DUIControls.Add(btSetting);
             #endregion

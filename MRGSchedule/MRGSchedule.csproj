@@ -61,6 +61,12 @@
     <Compile Include="FrmMain.Designer.cs">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmSetting.Designer.cs">
+      <DependentUpon>FrmSetting.cs</DependentUpon>
+    </Compile>
     <Compile Include="HookType.cs" />
     <Compile Include="LayeredBaseForm.cs">
       <SubType>Form</SubType>
@@ -76,6 +82,9 @@
     <Compile Include="Schedule.cs" />
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FrmSetting.resx">
+      <DependentUpon>FrmSetting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -109,6 +118,8 @@
     <Content Include="Resources\BtnTodayd.png" />
     <Content Include="Resources\BtnTodaye.png" />
     <Content Include="Resources\BtnTodayn.png" />
+    <Content Include="Resources\CheckboxD.png" />
+    <Content Include="Resources\CheckboxE.png" />
     <Content Include="Resources\CloseD.png" />
     <Content Include="Resources\CloseE.png" />
     <Content Include="Resources\CloseN.png" />
