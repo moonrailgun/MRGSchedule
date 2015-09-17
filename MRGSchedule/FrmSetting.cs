@@ -1,38 +1,58 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using LayeredSkin.DirectUI;
 using LayeredSkin.Controls;
 using System.Drawing.Text;
 using MRGSchedule.Properties;
+using System.IO;
 
 namespace MRGSchedule
 {
     public partial class FrmSetting : LayeredBaseForm
     {
-        public FrmSetting()
+        private FrmMain mainFrmInstance;
+        private string inipath;
+
+        private DuiComboBox ScWeek;
+        private DuiCheckBox bootCheck;
+
+        public FrmSetting(FrmMain mainFrm)
         {
             InitializeComponent();
 
+            this.mainFrmInstance = mainFrm;
+            this.inipath = mainFrmInstance.iniPath;
+
             InitUI();
+
+            //从INI文件中获取数据
+            if (File.Exists(inipath))
+            {
+                string currentWeek = INI.GetIniContentValue("setting", "currentWeek", inipath);
+                int weekIndex = mainFrmInstance.ScWeek.SelectedIndex;
+                ScWeek.SelectedIndex = currentWeek != "" ? Convert.ToInt32(currentWeek) : weekIndex;
+
+                string isBoot = INI.GetIniContentValue("setting", "isBoot", inipath);
+                bootCheck.Checked = isBoot != "" ? Convert.ToBoolean(isBoot) : false;
+            }
         }
 
         private void InitUI()
         {
-            //添加基础UI
+            //settingPageUI
             LayeredBaseControl settingPage = new LayeredBaseControl();
             settingPage.Size = new Size(this.Width, this.Height);
             settingPage.BackColor = Color.Transparent;
-            settingPage.MouseDown += MoveFormMouseDown;
             this.Controls.Add(settingPage);
 
-            //标题文本
+            #region 添加标题栏
+            DuiBaseControl titleBar = new DuiBaseControl();
+            titleBar.Size = new Size(settingPage.Width, 26);
+            titleBar.BackColor = Color.Transparent;
+            titleBar.MouseMove += MoveFormMouseDown;
+            settingPage.DUIControls.Add(titleBar);
+
             DuiLabel titleLabel = new DuiLabel();
             titleLabel.Text = "设置";
             titleLabel.Location = new Point(10, 10);
@@ -41,6 +61,19 @@ namespace MRGSchedule
             titleLabel.ForeColor = Color.DodgerBlue;
             titleLabel.MouseDown += MoveFormMouseDown;
             settingPage.DUIControls.Add(titleLabel);
+
+            //添加关闭按钮
+            DuiButton btClose = new DuiButton();
+            btClose.NormalImage = Resources.CloseN;
+            btClose.HoverImage = Resources.CloseE;
+            btClose.PressedImage = Resources.CloseD;
+            btClose.Location = new Point(settingPage.Width - 40, 13);
+            btClose.MouseClick += (sender, e) => { this.Close(); };
+            settingPage.DUIControls.Add(btClose);
+            #endregion
+
+            //标题文本
+
 
             #region 当前周数选择
             DuiLabel todLabel = new DuiLabel();
@@ -51,7 +84,7 @@ namespace MRGSchedule
             todLabel.ForeColor = Color.DodgerBlue;
             settingPage.DUIControls.Add(todLabel);
 
-            DuiComboBox ScWeek = new DuiComboBox();
+            ScWeek = new DuiComboBox();
             ScWeek.BaseColor = Color.White;
             ScWeek.BackColor = Color.White;
             ScWeek.Size = new Size(65, 25);
@@ -101,9 +134,9 @@ namespace MRGSchedule
             bootLabel.ForeColor = Color.DodgerBlue;
             settingPage.DUIControls.Add(bootLabel);
 
-            DuiCheckBox bootCheck = new DuiCheckBox();
-            bootCheck.Location = new Point(120, 90);
-            bootCheck.CheckRectWidth = 77;
+            bootCheck = new DuiCheckBox();
+            bootCheck.Location = new Point(120, 88);
+            bootCheck.CheckRectWidth = 62;
             bootCheck.CheckedNormal = Resources.CheckboxE;
             bootCheck.UncheckedNormal = Resources.CheckboxD;
             settingPage.DUIControls.Add(bootCheck);
@@ -116,6 +149,11 @@ namespace MRGSchedule
             confirmButton.ForeColor = Color.White;
             confirmButton.BaseColor = Color.DodgerBlue;
             confirmButton.Location = new Point(this.Width / 2 - confirmButton.Width / 2, this.Height - 90);
+            confirmButton.MouseClick += (sender, e) =>
+            {
+                INI.WritePrivateProfileString("setting", "currentWeek", ScWeek.Items[ScWeek.SelectedIndex].Tag.ToString(), inipath);
+                INI.WritePrivateProfileString("setting", "isBoot", bootCheck.Checked.ToString(), inipath);
+            };
             settingPage.DUIControls.Add(confirmButton);
         }
 

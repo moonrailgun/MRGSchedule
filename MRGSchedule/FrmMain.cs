@@ -1,17 +1,11 @@
 ﻿using LayeredSkin.DirectUI;
 using MRGSchedule.Properties;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Text;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MRGSchedule
@@ -71,13 +65,13 @@ namespace MRGSchedule
                 {
                     try
                     {
-                        string yearIndex = GetIniContentValue("config", "yearIndex", iniPath);
+                        string yearIndex = INI.GetIniContentValue("config", "yearIndex", iniPath);
                         ScYear.SelectedIndex = yearIndex != "" ? Convert.ToInt32(yearIndex) : ScYear.Controls.Count - 1;
 
-                        string weekIndex = GetIniContentValue("config", "weekIndex", iniPath);
+                        string weekIndex = INI.GetIniContentValue("config", "weekIndex", iniPath);
                         ScWeek.SelectedIndex = weekIndex != "" ? Convert.ToInt32(weekIndex) : ScWeek.Controls.Count - 1;
 
-                        string seasonIndex = GetIniContentValue("config", "seasonIndex", iniPath);
+                        string seasonIndex = INI.GetIniContentValue("config", "seasonIndex", iniPath);
                         ScSeason.Checked = seasonIndex != "" ? Convert.ToBoolean(seasonIndex) : false;
                     }
                     catch { }
@@ -90,9 +84,9 @@ namespace MRGSchedule
         {
             try
             {
-                WritePrivateProfileString("config", "yearIndex", ScYear.SelectedIndex.ToString(), iniPath);
-                WritePrivateProfileString("config", "weekIndex", ScWeek.SelectedIndex.ToString(), iniPath);
-                WritePrivateProfileString("config", "seasonIndex", ScSeason.Checked.ToString(), iniPath);
+                INI.WritePrivateProfileString("config", "yearIndex", ScYear.SelectedIndex.ToString(), iniPath);
+                INI.WritePrivateProfileString("config", "weekIndex", ScWeek.SelectedIndex.ToString(), iniPath);
+                INI.WritePrivateProfileString("config", "seasonIndex", ScSeason.Checked.ToString(), iniPath);
             }
             catch (Exception ex)
             {
@@ -260,8 +254,8 @@ namespace MRGSchedule
             btSetting.Location = new Point(DataSelectControl.Width - 70, 8);
             btSetting.MouseClick += (sender, e) =>
             {
-                if (settingFrm == null)
-                    settingFrm = new FrmSetting();
+                if (settingFrm == null || settingFrm.IsDisposed == true)
+                    settingFrm = new FrmSetting(this);
                 settingFrm.Show();
             };
             DataSelectControl.DUIControls.Add(btSetting);
@@ -748,38 +742,6 @@ namespace MRGSchedule
             }
             catch (Exception ex) { Console.WriteLine(ex.ToString()); }
         }
-        #endregion
-
-        #region ini操作
-        /// <summary>
-        /// section：要读取的段落名
-        /// key: 要读取的键
-        /// defVal: 读取异常的情况下的缺省值
-        /// retVal: key所对应的值，如果该key不存在则返回空值
-        /// size: 值允许的大小
-        /// filePath: INI文件的完整路径和文件名
-        /// </summary>
-        [DllImport("kernel32")]
-        private static extern int GetPrivateProfileString(string section, string key, string defVal, StringBuilder retVal, int size, string filePath);
-
-        /// <summary>
-        /// 自定义读取INI文件中的内容方法
-        /// </summary>
-        private string GetIniContentValue(string section, string key, string path)
-        {
-            StringBuilder temp = new StringBuilder(1024);
-            GetPrivateProfileString(section, key, "", temp, 1024, path);
-            return temp.ToString();
-        }
-
-        /// <summary>
-        /// section: 要写入的段落名
-        /// key: 要写入的键，如果该key存在则覆盖写入
-        /// val: key所对应的值
-        /// filePath: INI文件的完整路径和文件名
-        /// </summary>
-        [DllImport("kernel32")]
-        private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
         #endregion
     }
 }

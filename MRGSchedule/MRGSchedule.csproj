@@ -68,6 +68,7 @@
       <DependentUpon>FrmSetting.cs</DependentUpon>
     </Compile>
     <Compile Include="HookType.cs" />
+    <Compile Include="INI.cs" />
     <Compile Include="LayeredBaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
