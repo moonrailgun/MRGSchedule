@@ -29,9 +29,9 @@ namespace MRGSchedule
             //从INI文件中获取数据
             if (File.Exists(inipath))
             {
-                string currentWeek = INI.GetIniContentValue("setting", "currentWeek", inipath);
+                string currentWeekIndex = INI.GetIniContentValue("setting", "currentWeekIndex", inipath);
                 int weekIndex = mainFrmInstance.ScWeek.SelectedIndex;
-                ScWeek.SelectedIndex = currentWeek != "" ? Convert.ToInt32(currentWeek) : weekIndex;
+                ScWeek.SelectedIndex = currentWeekIndex != "" ? Convert.ToInt32(currentWeekIndex) : weekIndex;
 
                 string isBoot = INI.GetIniContentValue("setting", "isBoot", inipath);
                 bootCheck.Checked = isBoot != "" ? Convert.ToBoolean(isBoot) : false;
@@ -151,8 +151,13 @@ namespace MRGSchedule
             confirmButton.Location = new Point(this.Width / 2 - confirmButton.Width / 2, this.Height - 90);
             confirmButton.MouseClick += (sender, e) =>
             {
-                INI.WritePrivateProfileString("setting", "currentWeek", ScWeek.Items[ScWeek.SelectedIndex].Tag.ToString(), inipath);
+                //改写Index
+                INI.WritePrivateProfileString("setting", "currentWeekIndex", ScWeek.SelectedIndex.ToString(), inipath);
+                INI.WritePrivateProfileString("setting","currentWeekSetTime", DateTime.Now.ToString("yyyy-MM-dd"), inipath);
                 INI.WritePrivateProfileString("setting", "isBoot", bootCheck.Checked.ToString(), inipath);
+
+                //改写主页面的index
+                mainFrmInstance.ScWeek.SelectedIndex = ScWeek.SelectedIndex;
             };
             settingPage.DUIControls.Add(confirmButton);
         }

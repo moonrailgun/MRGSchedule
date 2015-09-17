@@ -68,8 +68,28 @@ namespace MRGSchedule
                         string yearIndex = INI.GetIniContentValue("config", "yearIndex", iniPath);
                         ScYear.SelectedIndex = yearIndex != "" ? Convert.ToInt32(yearIndex) : ScYear.Controls.Count - 1;
 
-                        string weekIndex = INI.GetIniContentValue("config", "weekIndex", iniPath);
-                        ScWeek.SelectedIndex = weekIndex != "" ? Convert.ToInt32(weekIndex) : ScWeek.Controls.Count - 1;
+                        string lastWeekIndex = INI.GetIniContentValue("config", "weekIndex", iniPath);
+                        string currentWeekIndex = INI.GetIniContentValue("setting", "currentWeekIndex", iniPath);
+                        if (currentWeekIndex == "")
+                        {
+                            //如果用户没设置当前周
+                            ScWeek.SelectedIndex = lastWeekIndex != "" ? Convert.ToInt32(lastWeekIndex) : 0;
+                        }
+                        else
+                        {
+                            //如果用户设置了当前周，计算后得出现在的当前周
+                            string currentWeekSetTime = INI.GetIniContentValue("setting", "currentWeekSetTime", iniPath);
+                            DateTime setTime = Convert.ToDateTime(currentWeekSetTime);
+                            int i = setTime.DayOfWeek - DayOfWeek.Monday;
+                            if(i == -1)
+                                i = 6;//处理周日
+                            TimeSpan ts = new TimeSpan(i,0,0,0);
+                            DateTime mondayDate = setTime.Subtract(ts);//该周周一时间
+                            double dayInterval = (DateTime.Now - mondayDate).TotalDays;
+                            int realWeekIndex = (int)(dayInterval / (double)7) + Convert.ToInt32(currentWeekIndex);
+                            if (realWeekIndex >= 20) realWeekIndex = 20;//处理超值
+                            ScWeek.SelectedIndex = realWeekIndex;
+                        }
 
                         string seasonIndex = INI.GetIniContentValue("config", "seasonIndex", iniPath);
                         ScSeason.Checked = seasonIndex != "" ? Convert.ToBoolean(seasonIndex) : false;
@@ -252,12 +272,7 @@ namespace MRGSchedule
             btSetting.HoverImage = Resources.SettingE;
             btSetting.PressedImage = Resources.SettingD;
             btSetting.Location = new Point(DataSelectControl.Width - 70, 8);
-            btSetting.MouseClick += (sender, e) =>
-            {
-                if (settingFrm == null || settingFrm.IsDisposed == true)
-                    settingFrm = new FrmSetting(this);
-                settingFrm.Show();
-            };
+            btSetting.MouseClick += OpenSettingFrm;
             DataSelectControl.DUIControls.Add(btSetting);
             #endregion
 
@@ -509,7 +524,19 @@ namespace MRGSchedule
         //点击【今天】按钮
         private void BtnTodayClick(object sender, DuiMouseEventArgs e)
         {
-
+            string currentWeek = INI.GetIniContentValue("setting", "currentWeek", iniPath);
+            if (currentWeek == "")
+            {
+                DialogResult result = MessageBox.Show("尚未设定当前周，请在设置页面中设置后选择");
+                if (result == DialogResult.OK)
+                {
+                    this.OpenSettingFrm(null, null);
+                }
+            }
+            else
+            {
+                ScWeek.SelectedIndex = Convert.ToInt32(currentWeek);
+            }
         }
 
         #region 时钟窗口句柄
@@ -743,5 +770,12 @@ namespace MRGSchedule
             catch (Exception ex) { Console.WriteLine(ex.ToString()); }
         }
         #endregion
+
+        private void OpenSettingFrm(object sender, EventArgs e)
+        {
+            if (settingFrm == null || settingFrm.IsDisposed == true)
+                settingFrm = new FrmSetting(this);
+            settingFrm.Show();
+        }
     }
 }
