@@ -158,6 +158,9 @@ namespace MRGSchedule
 
                 //改写主页面的index
                 mainFrmInstance.ScWeek.SelectedIndex = ScWeek.SelectedIndex;
+
+                //关闭页面
+                this.Close();
             };
             settingPage.DUIControls.Add(confirmButton);
         }

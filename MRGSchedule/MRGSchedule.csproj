@@ -32,6 +32,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\logo.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>MRGSchedule.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="LayeredSkin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=afd022ec866c66cc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -124,6 +130,7 @@
     <Content Include="Resources\CloseD.png" />
     <Content Include="Resources\CloseE.png" />
     <Content Include="Resources\CloseN.png" />
+    <Content Include="Resources\logo.ico" />
     <Content Include="Resources\next_d.png" />
     <Content Include="Resources\next_e.png" />
     <Content Include="Resources\next_n.png" />

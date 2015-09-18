@@ -39,7 +39,6 @@ namespace MRGSchedule
                     Directory.CreateDirectory(dataRootPath);
                 }
 
-
                 //设置窗体
                 this.BackColor = Color.FromArgb(255 / 2, Color.White);
                 ScheduleBaseControl.Location = new Point(10, 55);
@@ -50,8 +49,6 @@ namespace MRGSchedule
                 this.FormClosing += FrmMain_FormClosing;
 
                 Schedule sc = new Schedule();
-
-
 
                 CreatDataSelectControl();
                 /*
@@ -81,9 +78,9 @@ namespace MRGSchedule
                             string currentWeekSetTime = INI.GetIniContentValue("setting", "currentWeekSetTime", iniPath);
                             DateTime setTime = Convert.ToDateTime(currentWeekSetTime);
                             int i = setTime.DayOfWeek - DayOfWeek.Monday;
-                            if(i == -1)
+                            if (i == -1)
                                 i = 6;//处理周日
-                            TimeSpan ts = new TimeSpan(i,0,0,0);
+                            TimeSpan ts = new TimeSpan(i, 0, 0, 0);
                             DateTime mondayDate = setTime.Subtract(ts);//该周周一时间
                             double dayInterval = (DateTime.Now - mondayDate).TotalDays;
                             int realWeekIndex = (int)(dayInterval / (double)7) + Convert.ToInt32(currentWeekIndex);
@@ -282,7 +279,7 @@ namespace MRGSchedule
             btClose.HoverImage = Resources.CloseE;
             btClose.PressedImage = Resources.CloseD;
             btClose.Location = new Point(DataSelectControl.Width - 35, 8);
-            btClose.MouseClick += (sender, e) => { this.Close(); };
+            btClose.MouseClick += (sender, e) => { this.WindowState = FormWindowState.Minimized;/*X按钮为最小化*/ };
             DataSelectControl.DUIControls.Add(btClose);
             #endregion
         }
@@ -776,6 +773,14 @@ namespace MRGSchedule
             if (settingFrm == null || settingFrm.IsDisposed == true)
                 settingFrm = new FrmSetting(this);
             settingFrm.Show();
+        }
+
+        /// <summary>
+        /// 托盘双击
+        /// </summary>
+        private void NotifyDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.WindowState = FormWindowState.Normal;
         }
     }
 }

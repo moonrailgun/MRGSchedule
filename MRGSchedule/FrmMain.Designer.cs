@@ -28,10 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.TrackOpacity = new LayeredSkin.Controls.LayeredTrackBar();
             this.DataSelectControl = new LayeredSkin.Controls.LayeredBaseControl();
             this.ScheduleBaseControl = new LayeredSkin.Controls.LayeredBaseControl();
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.SuspendLayout();
             // 
             // TrackOpacity
@@ -81,13 +83,14 @@
             this.DataSelectControl.Borders.RightWidth = 1;
             this.DataSelectControl.Borders.TopColor = System.Drawing.Color.Empty;
             this.DataSelectControl.Borders.TopWidth = 1;
+            this.DataSelectControl.Canvas = ((System.Drawing.Bitmap)(resources.GetObject("DataSelectControl.Canvas")));
             this.DataSelectControl.Location = new System.Drawing.Point(12, 12);
             this.DataSelectControl.Name = "DataSelectControl";
             this.DataSelectControl.Size = new System.Drawing.Size(280, 25);
             this.DataSelectControl.TabIndex = 3;
             this.DataSelectControl.Text = "layeredBaseControl2";
             // 
-            // MonthBaseControl
+            // ScheduleBaseControl
             // 
             this.ScheduleBaseControl.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ScheduleBaseControl.Borders.BottomColor = System.Drawing.Color.Empty;
@@ -98,12 +101,19 @@
             this.ScheduleBaseControl.Borders.RightWidth = 1;
             this.ScheduleBaseControl.Borders.TopColor = System.Drawing.Color.Empty;
             this.ScheduleBaseControl.Borders.TopWidth = 1;
-            this.ScheduleBaseControl.Canvas = ((System.Drawing.Bitmap)(resources.GetObject("MonthBaseControl.Canvas")));
+            this.ScheduleBaseControl.Canvas = ((System.Drawing.Bitmap)(resources.GetObject("ScheduleBaseControl.Canvas")));
             this.ScheduleBaseControl.Location = new System.Drawing.Point(23, 91);
-            this.ScheduleBaseControl.Name = "MonthBaseControl";
+            this.ScheduleBaseControl.Name = "ScheduleBaseControl";
             this.ScheduleBaseControl.Size = new System.Drawing.Size(247, 157);
             this.ScheduleBaseControl.TabIndex = 2;
             this.ScheduleBaseControl.Text = "layeredBaseControl1";
+            // 
+            // notifyIcon1
+            // 
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
+            this.notifyIcon1.Text = "课程婊";
+            this.notifyIcon1.Visible = true;
+            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyDoubleClick);
             // 
             // FrmMain
             // 
@@ -128,6 +138,7 @@
         private LayeredSkin.Controls.LayeredBaseControl ScheduleBaseControl;
         private LayeredSkin.Controls.LayeredBaseControl DataSelectControl;
         private LayeredSkin.Controls.LayeredTrackBar TrackOpacity;
+        private System.Windows.Forms.NotifyIcon notifyIcon1;
     }
 }
 
