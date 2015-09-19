@@ -412,10 +412,12 @@ namespace MRGSchedule
                 for (int classNum = 1; classNum <= 5; classNum++)
                 {
                     LessonInfo info = null;
+                    Lesson currentLesson = new Lesson();
                     foreach (Lesson lesson in schedule.GetLessonList())
                     {
                         if (lesson.weekNum == (WeekDay)weekNum && lesson.classNum == classNum)
                         {
+                            currentLesson = lesson;
                             info = lesson.lessonInfo;
                             break;
                         }
@@ -433,6 +435,8 @@ namespace MRGSchedule
                     if (info != null)
                     {
                         baseControl.Tag = info;
+                        //因为太丑先注释掉
+                        //baseControl.BackColor = currentLesson.lessonColor;
 
                         DuiLabel lb = new DuiLabel();
                         lb.Text = info.lessonName;

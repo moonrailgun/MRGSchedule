@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Drawing;
 
 namespace MRGSchedule
 {
@@ -98,6 +99,7 @@ namespace MRGSchedule
                 }
             }
 
+            AllocLessonColor(ref lesson);//分配课程背景颜色
             lessonList.Add(lesson);
             return true;
         }
@@ -124,13 +126,33 @@ namespace MRGSchedule
 
         }
 
+        /// <summary>
+        /// 查找同一类型同一节课，如果没有则随机生成并分配
+        /// </summary>
+        private void AllocLessonColor(ref Lesson lesson)
+        {
+            foreach(Lesson lessonInList in lessonList)
+            {
+                if(lessonInList.lessonInfo.lessonName == lesson.lessonInfo.lessonName && lesson.lessonColor != null)
+                {
+                    //已存在
+                    lesson.lessonColor = lessonInList.lessonColor;
+                    break;
+                }
+            }
+
+            //不存在，随机生成
+            Random random = new Random();
+            Color color = Color.FromArgb(random.Next(0, 255), random.Next(0, 255), random.Next(0, 255));
+            lesson.lessonColor = color;
+        }
+
         public List<Lesson> GetLessonList()
         { return this.lessonList; }
 
         #region 序列化
         /// <summary>
         /// 将数据序列化为二进制数据流并保存
-        /// PS：如果无法返回修改数据可尝试在stream前加ref关键字（尝试修改）
         /// </summary>
         public static void Serialize(Schedule sch, string filePath)
         {
@@ -175,6 +197,7 @@ namespace MRGSchedule
         public WeekDay weekNum;//星期几
         public int classNum;//第几大节
         public LessonInfo lessonInfo;
+        public Color lessonColor;
     }
     enum WeekDay
     {
