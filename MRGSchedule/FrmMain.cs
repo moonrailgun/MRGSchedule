@@ -775,6 +775,7 @@ namespace MRGSchedule
             settingFrm.Show();
         }
 
+        #region 托盘事件
         /// <summary>
         /// 托盘双击
         /// </summary>
@@ -782,5 +783,21 @@ namespace MRGSchedule
         {
             this.WindowState = FormWindowState.Normal;
         }
+        private void 打开ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Normal;
+        }
+        private void 设置ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.OpenSettingFrm(sender, e);
+        }
+        private void 退出ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        #endregion
+
+
     }
 }
