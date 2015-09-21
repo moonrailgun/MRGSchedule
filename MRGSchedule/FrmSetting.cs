@@ -6,6 +6,7 @@ using LayeredSkin.Controls;
 using System.Drawing.Text;
 using MRGSchedule.Properties;
 using System.IO;
+using Microsoft.Win32;
 
 namespace MRGSchedule
 {
@@ -16,6 +17,8 @@ namespace MRGSchedule
 
         private DuiComboBox ScWeek;
         private DuiCheckBox bootCheck;
+
+        private bool lastBootChecked;
 
         public FrmSetting(FrmMain mainFrm)
         {
@@ -34,7 +37,7 @@ namespace MRGSchedule
                 ScWeek.SelectedIndex = currentWeekIndex != "" ? Convert.ToInt32(currentWeekIndex) : weekIndex;
 
                 string isBoot = INI.GetIniContentValue("setting", "isBoot", inipath);
-                bootCheck.Checked = isBoot != "" ? Convert.ToBoolean(isBoot) : false;
+                bootCheck.Checked = lastBootChecked = isBoot != "" ? Convert.ToBoolean(isBoot) : false;
             }
         }
 
@@ -153,11 +156,33 @@ namespace MRGSchedule
             {
                 //改写Index
                 INI.WritePrivateProfileString("setting", "currentWeekIndex", ScWeek.SelectedIndex.ToString(), inipath);
-                INI.WritePrivateProfileString("setting","currentWeekSetTime", DateTime.Now.ToString("yyyy-MM-dd"), inipath);
+                INI.WritePrivateProfileString("setting", "currentWeekSetTime", DateTime.Now.ToString("yyyy-MM-dd"), inipath);
                 INI.WritePrivateProfileString("setting", "isBoot", bootCheck.Checked.ToString(), inipath);
 
                 //改写主页面的index
                 mainFrmInstance.ScWeek.SelectedIndex = ScWeek.SelectedIndex;
+
+                //处理开机自启动
+                if (bootCheck.Checked != lastBootChecked)
+                {
+                    //与之前不同
+                    string path = Application.ExecutablePath;
+                    RegistryKey rk = Registry.LocalMachine;
+                    RegistryKey rk2 = rk.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
+                    if (bootCheck.Checked)
+                    {
+                        //设置开机自启动
+                        rk2.SetValue("SKR", path);
+                    }
+                    else
+                    {
+                        //取消开机自启动
+                        rk2.DeleteValue("SKR", false);
+                    }
+                    rk2.Close();
+                    rk.Close();
+                }
+
 
                 //关闭页面
                 this.Close();
