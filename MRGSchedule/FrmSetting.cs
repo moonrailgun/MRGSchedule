@@ -154,6 +154,35 @@ namespace MRGSchedule
             confirmButton.Location = new Point(this.Width / 2 - confirmButton.Width / 2, this.Height - 90);
             confirmButton.MouseClick += (sender, e) =>
             {
+                //处理开机自启动
+                if (bootCheck.Checked != lastBootChecked)
+                {
+                    try
+                    {
+                        //与之前不同
+                        string path = Application.ExecutablePath;
+                        RegistryKey rk = Registry.LocalMachine;
+                        RegistryKey rk2 = rk.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
+                        if (bootCheck.Checked)
+                        {
+                            //设置开机自启动
+                            rk2.SetValue("SKR", path);
+                        }
+                        else
+                        {
+                            //取消开机自启动
+                            rk2.DeleteValue("SKR", false);
+                        }
+                        rk2.Close();
+                        rk.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("设置开机自启动失败，可能是权限不足：" + ex.ToString());
+                        bootCheck.Checked = lastBootChecked;
+                    }
+                }
+
                 //改写Index
                 INI.WritePrivateProfileString("setting", "currentWeekIndex", ScWeek.SelectedIndex.ToString(), inipath);
                 INI.WritePrivateProfileString("setting", "currentWeekSetTime", DateTime.Now.ToString("yyyy-MM-dd"), inipath);
@@ -161,27 +190,6 @@ namespace MRGSchedule
 
                 //改写主页面的index
                 mainFrmInstance.ScWeek.SelectedIndex = ScWeek.SelectedIndex;
-
-                //处理开机自启动
-                if (bootCheck.Checked != lastBootChecked)
-                {
-                    //与之前不同
-                    string path = Application.ExecutablePath;
-                    RegistryKey rk = Registry.LocalMachine;
-                    RegistryKey rk2 = rk.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
-                    if (bootCheck.Checked)
-                    {
-                        //设置开机自启动
-                        rk2.SetValue("SKR", path);
-                    }
-                    else
-                    {
-                        //取消开机自启动
-                        rk2.DeleteValue("SKR", false);
-                    }
-                    rk2.Close();
-                    rk.Close();
-                }
 
 
                 //关闭页面
